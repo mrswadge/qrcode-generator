@@ -1061,7 +1061,10 @@ function makeFill(ctx, x, y, w, h) {
 // ─── Draw embedded image ─────────────────────────────────────
 function drawEmbeddedImg(ctx, ox, oy, qrSz) {
   const img  = S.img.el;
-  const sz   = qrSz * S.img.ratio;
+  const mc   = S.qrObj.getModuleCount();
+  const qz   = S.quietZone;
+  const cell = qrSz / (mc + qz * 2);      // pixel size of one module
+  const sz   = mc * cell * S.img.ratio;   // size relative to module area only (excludes quiet zones)
   const ix   = ox + (qrSz - sz) / 2;
   const iy   = oy + (qrSz - sz) / 2;
   const pad  = S.img.padding ? Math.max(4, sz * 0.06) : 0;
@@ -1204,7 +1207,7 @@ function generateSVG() {
   // Embedded image as base64 data URI
   let imgSVG = '';
   if (S.img.el) {
-    const imgSz  = qrSz * S.img.ratio;
+    const imgSz  = mc * cell * S.img.ratio;   // size relative to module area only (excludes quiet zones)
     const imgX   = ox + (qrSz - imgSz) / 2;
     const imgY   = oy + (qrSz - imgSz) / 2;
     const pad    = S.img.padding ? Math.max(4, imgSz * 0.06) : 0;
